@@ -1,10 +1,10 @@
 package org.test.views.conlose;
 
 import org.test.context.SimpleContext;
-import org.test.views.conlose.pages.MainPage;
 import org.test.views.conlose.pages.Page;
-// вообще появляются мылси по поводу передачи сообщений. Поскольку метод навигейт должен быть приватным
-// всё таки, но пока оставим так. А то буду с этим возиться годы.
+
+import java.util.Map;
+
 public class Paginator {
     private final SimpleContext simpleContext;
 
@@ -12,13 +12,20 @@ public class Paginator {
         this.simpleContext = context;
     }
 
-    private void navigateTo(String url) {
-        Page currentPage = (Page) simpleContext.get(url);
+    private Request navigateTo(Request request) {
+        Page currentPage = (Page) simpleContext.get(request.pageType().getValue());
+        currentPage.receiveRequest(request);
         currentPage.renderPage();
-        currentPage.handleUserInput();
+        return currentPage.handleUserInput();
     }
 
     public void start() {
-        navigateTo("mainPage");
+        Request request = new Request(Map.of(
+                "userId", "111"
+        ), PageType.MAIN);
+
+        while (request.pageType() != PageType.EXIT) {
+            request = navigateTo(request);
+        }
     }
 }

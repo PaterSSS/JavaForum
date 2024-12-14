@@ -14,13 +14,11 @@ public class ContextInitializer {
     }
 
     private static void fillContext() {
-        RequestContext requestContext = new RequestContext();
 
         MainPageControllerI mainPageController = new MainPageController();
         context.setBean("mainPageController", mainPageController);
 
         Page mainPage = new MainPage(mainPageController);
-        mainPage.setContext(requestContext);
 
         context.setBean("mainPage", mainPage);
     }

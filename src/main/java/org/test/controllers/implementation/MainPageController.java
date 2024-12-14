@@ -16,8 +16,8 @@ public class MainPageController implements MainPageControllerI {
 
     @Override
     public Response<List<CategoryDTO>> categories() {
-        return new SuccessResponse<>(List.of(new CategoryDTO("cinema", "standart films about nature"),
-                new CategoryDTO("science", "about intimidating facts")));
+        return new SuccessResponse<>(List.of(new CategoryDTO("cinema", "common films about nature"),
+                new CategoryDTO("Science", "about intimidating facts")));
 
     }
 }

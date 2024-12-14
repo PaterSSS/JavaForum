@@ -6,24 +6,28 @@ import org.test.models.DTOs.CategoryDTO;
 import org.test.models.DTOs.UserDTO;
 import org.test.models.Response;
 import org.test.models.ResponseStatus;
+import org.test.views.conlose.PageType;
+import org.test.views.conlose.Request;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
-
-public class MainPage extends Page {
+// проверить вывод, когда не находит юзера база данных. По хорошему нужен глобальный объект session, в котором
+// будет храниться id пользователя и другая доп инфа имеющая ценность на всех страница. ПОка не знаю что кроме id туда
+// впихнуть можно.
+public class MainPage implements Page {
     private final MainPageControllerI controller;
     private Response<UserDTO> userData;
     private Response<List<CategoryDTO>> categories;
+    private Request request;
 
     public MainPage(MainPageControllerI controller) {
         this.controller = controller;
-        receiveDate();
     }
 
-    private void receiveDate() {
-        userData = controller.username(111);
+    private void receiveDate(String userId) {
+        userData = controller.username(Integer.parseInt(userId));
         categories = controller.categories();
-
     }
 
     private void renderUsernameBox() {
@@ -73,7 +77,7 @@ public class MainPage extends Page {
         for (int i = 0; i < categoriesList.size(); i++)
             System.out.println(i + 1 + ". " + categoriesList.get(i).categoryName());
 
-        System.out.println("Enter number of category you want to view");
+        System.out.println("Enter number of category you want to view: ");
     }
 
     @Override
@@ -83,19 +87,59 @@ public class MainPage extends Page {
     }
 
     @Override
-    public void handleUserInput() {
+    public Request handleUserInput() {
         Scanner scanner = new Scanner(System.in);
         String userInput = scanner.nextLine().toLowerCase().trim();
 
         if (userInput.matches("\\d")) {
-            getContext().addData("CategoryId", userInput);
-            getPaginator()
+            String selectedCategoryName = categories.getData().get(Integer.parseInt(userInput) - 1).categoryName();
+
+            return new Request(Map.of(
+                    "categoryName", selectedCategoryName
+            ), PageType.CATEGORY);
+        } else {
+            switch (userInput) {
+                case "q" -> {
+                    return new Request(null, PageType.EXIT);
+                }
+                case "p" -> {
+                    return new Request(Map.of(
+                            "userId", request.getParameter("userId").orElse("111")
+                    ), PageType.PROFILE);
+                }
+                case "l" -> {
+                    return new Request(Map.of(), PageType.LOGIN);
+                }
+                default -> {
+                    System.out.println("Seems you entered an invalid commend.\n" +
+                            "Please try again. Page will be reloaded in 3 seconds.");
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        System.out.println("Something went wrong while sleeping. Reloading page.");
+                        return new Request(Map.of(
+                                "userId", request.getParameter("userId").orElse("111")
+                        ), PageType.MAIN);
+                    }
+
+                    return new Request(Map.of(
+                            "userId", request.getParameter("userId").orElse("111")
+                    ), PageType.MAIN);
+                }
+            }
         }
+    }
+
+    @Override
+    public void receiveRequest(Request request) {
+        this.request = request;
+        String userId = request.getParameter("userId").orElse("111"); // 111 - id того кто ещё на авторизовался
+        receiveDate(userId);
     }
 
     public static void main(String[] args) {
         MainPage test = new MainPage(new MainPageController());
-        test.receiveDate();
+        test.receiveDate("111");
         test.renderUsernameBox();
         test.renderCategoriesList();
     }

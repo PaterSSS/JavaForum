@@ -1,13 +1,20 @@
 package org.test.views.conlose.pages;
 
-public class PostPage extends Page {
+import org.test.views.conlose.Request;
+
+public class PostPage implements Page {
     @Override
     public void renderPage() {
 
     }
 
     @Override
-    public void handleUserInput() {
+    public Request handleUserInput() {
+        return null;
+    }
+
+    @Override
+    public void receiveRequest(Request request) {
 
     }
 }
