@@ -10,14 +10,13 @@ import java.util.List;
 
 public class MainPageController implements MainPageControllerI {
     @Override
-    public Response<UserDTO> username(int userIf) {
+    public Response<UserDTO> username(int userId) {
         return new SuccessResponse<>(new UserDTO("Jon Dow", 111));
     }
 
     @Override
     public Response<List<CategoryDTO>> categories() {
-        return new SuccessResponse<>(List.of(new CategoryDTO("cinema", "common films about nature"),
-                new CategoryDTO("Science", "about intimidating facts")));
-
+        return new SuccessResponse<>(List.of(new CategoryDTO(1,
+                "cinema", "common films about nature")));
     }
 }

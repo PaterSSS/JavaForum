@@ -6,6 +6,7 @@ public enum PageType {
     CATEGORY("categoryPage"),
     POST("postPage"),
     LOGIN("loginPage"),
+    CREATE_POST("createPostPage"),
     EXIT("exitPage");
 
     private final String value;

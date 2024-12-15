@@ -31,7 +31,7 @@ public class MainPage implements Page {
     }
 
     private void renderUsernameBox() {
-
+        //это блок кода вынести бы по-хорошему в отдельную функцию проверки(утверждение к другим таким же относится)
         if (userData.getStatusCode() == ResponseStatus.InternalServerError) {
             System.out.println(userData.getMessage() + " Please try to login again.");
             System.out.println("Enter q to exit.");
@@ -92,6 +92,9 @@ public class MainPage implements Page {
         String userInput = scanner.nextLine().toLowerCase().trim();
 
         if (userInput.matches("\\d")) {
+            //TODO - добавить проверку что введённое число попадает в диапазон тем
+            //Если нет то, можно снова вывести всю страницу(затратно) придумать как крутить ввод пока правильный не
+            //получим
             String selectedCategoryName = categories.getData().get(Integer.parseInt(userInput) - 1).categoryName();
 
             return new Request(Map.of(
@@ -117,14 +120,10 @@ public class MainPage implements Page {
                         Thread.sleep(3000);
                     } catch (InterruptedException e) {
                         System.out.println("Something went wrong while sleeping. Reloading page.");
-                        return new Request(Map.of(
-                                "userId", request.getParameter("userId").orElse("111")
-                        ), PageType.MAIN);
+                        return this.request;
                     }
 
-                    return new Request(Map.of(
-                            "userId", request.getParameter("userId").orElse("111")
-                    ), PageType.MAIN);
+                    return this.request;
                 }
             }
         }
